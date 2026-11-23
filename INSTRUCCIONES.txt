@@ -1,0 +1,79 @@
+SKILLY - COMO ACTIVAR LA PAGINA WEB
+===================================
+
+REQUISITO
+- Tener Node.js instalado (para comprobarlo, abre CMD y escribe: node -v).
+
+PASOS PARA INICIAR
+1. Descomprime/copia la carpeta "Skilly-Web" en tu PC (ej: Escritorio).
+2. Opcion facil: haz doble clic en INICIAR.bat
+   (abre el servidor y el navegador solo).
+3. Opcion manual:
+   - Abre CMD dentro de la carpeta Skilly-Web
+   - Escribe:  node server.js
+   - Abre el navegador en:  http://localhost:3000
+4. Para apagar el servidor: cierra la ventana negra o presiona Ctrl + C.
+
+IMPORTANTE: antes de iniciar, enciende MySQL en XAMPP e importa database/skilly.sql
+(pasos en GUIA_BASE_DE_DATOS.txt). La primera vez se ejecuta npm install (requiere internet).
+Si el puerto 3000 esta ocupado, cambia el numero 3000 al final de server.js.
+
+ESTRUCTURA DE LA CARPETA
+- server.js ............ Servidor y reglas de negocio (API)
+- database.js / database/skilly.sql ... Base de datos MySQL (tablas usuarios, reservas, etc.) (ver GUIA_BASE_DE_DATOS.txt)
+- INICIAR.bat .......... Acceso directo para arrancar
+- public/ .............. Paginas web
+    index.html ............... Inicio: indice y Quienes somos
+    marketplace.html ......... Marketplace (lista de profesionales)
+    img/logo.png ............. Logo de Skilly (puedes reemplazarlo)
+    reservar.html ............ Checkout y pago en custodia
+    login.html ............... Ingreso (empresa, talento y admin)
+    registro-empresa.html .... Registro de empresas (redirige al marketplace)
+
+    registro-profesional.html  Registro de talento
+    empresa.html ............. Panel de la empresa
+    profesional.html ......... Panel del profesional
+    admin.html ............... Panel de Skilly (panoramica)
+    css/style.css ............ Estilos
+    js/ ...................... Codigo de cada pagina (app.js es el comun)
+
+REGLAS DE REGISTRO
+- Solo existen dos tipos de cuenta: Empresa y Talento (trabajador).
+- El RUT se valida con el digito verificador (modulo 11) y no puede repetirse.
+- Contrasena: minimo 10 caracteres, con mayuscula, minuscula, numero y simbolo; sin claves comunes,
+  secuencias (1234, abcd) ni datos propios (correo, nombre, RUT).
+
+USUARIO ADMIN
+- Correo: admin@skilly.cl
+- Clave: SkillyAdmin2026 (predeterminada; esta definida al inicio de server.js, constante ADMIN_PASSWORD).
+
+COMO PROBAR EL FLUJO COMPLETO
+1. Ve a "Unete como talento" y registra un profesional (LinkedIn obligatorio).
+2. Ingresa como admin (login.html) y en el profesional pulsa:
+   "+Entrevista", luego "Acordar" (tarifa) y "Aprobar".
+3. Ingresa como el profesional y agrega bloques de disponibilidad (max. 4 horas).
+4. En el Marketplace reserva un bloque (el primer servicio se puede sin cuenta).
+   Paga con Webpay (tarjeta de prueba, ver TRANSBANK.md): el dinero queda retenido en custodia.
+5. Registra una empresa (al terminar entra directo al Marketplace): desde la segunda reserva se exige cuenta.
+6. En el panel empresa: reagendar (1 sola vez), cancelar (reverso de dinero,
+   penalizacion si falta menos de 24 h) o confirmar servicio completo.
+7. Si salio bien, la empresa pulsa "Terminado" y el pago se libera solo.
+   Si no esta satisfecha, pulsa "No estoy satisfecho", elige el motivo y el dinero
+   sigue retenido; el admin solo media y marca "Solucionado".
+   El veredicto final y la liberacion del dinero SIEMPRE los da el cliente.
+   El admin ve el historial de reclamos y la reputacion interna de clientes y profesionales.
+   Al confirmar se libera el pago y se genera la boleta del profesional.
+8. La empresa puede dejar feedback privado; solo lo ve Skilly en el panel admin, con el nombre de la empresa que evalua y del profesional evaluado.
+
+REGLAS IMPLEMENTADAS
+- Bloques de maximo 4 horas, sin solaparse; los define el profesional.
+- Tarifa propuesta por el profesional; Skilly puede contraofertar.
+- Comision Skilly y penalizacion de cancelacion configurables en el panel admin.
+- Hasta 3 entrevistas por profesional; 3 alertas = baja de la plataforma.
+- Catalogo de 15 categorias (public/js/catalogo.js): Desarrollo y Tecnologia, Datos e IA, Diseno, Marketing, Negocios, Finanzas, Ventas, RRHH, Ingenieria, Legal, Consultoria, Soporte, Redaccion, Logistica y Audiovisual.
+- Sin ranking publico; feedback solo entre empresa y Skilly.
+
+LIMITACIONES (pendientes)
+- Webpay Plus esta integrado en ambiente de PRUEBAS de Transbank (ver TRANSBANK.md). Falta pasar a produccion.
+- Boletas manuales (falta integrar API del SII).
+- Login con Google/LinkedIn no esta implementado.
